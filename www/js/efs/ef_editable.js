@@ -931,6 +931,12 @@ ef_editable_fecha_hora.prototype.constructor = ef_editable_fecha_hora;
 		}
 	};
 
+	//cuando_cambia_valor (disparar_callback)
+	ef_editable_fecha_hora.prototype.cuando_cambia_valor = function(callback) {
+		addEvent(this.input()[0], 'onchange', callback);
+		addEvent(this.input()[1], 'onchange', callback);
+	};
+
 	// ########################################################################################################
 	// ########################################################################################################
 
