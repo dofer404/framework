@@ -238,21 +238,20 @@ class toba_vinculador
 		//Obtengo el prefijo del vinculo
 		if ( ! isset($prefijo) ) {
 			$prefijo = $this->prefijo;	
-		} else {
-			if (strpos($prefijo,'?') === false) {
-				$prefijo = $prefijo . '?';
-			}
+		} elseif (strpos($prefijo,'?') === false) {
+			$prefijo = $prefijo . '?';
 		}
 		//Genero la URL que invoca la solicitud
-		$vinculo = $prefijo . $separador . apex_hilo_qs_item . "=" . $item_a_llamar;
-		if(trim($parametros_formateados)!=""){
-
+		$vinculo = (substr($prefijo, -1, 1) == '?') ? $prefijo : $prefijo . $separador; 
+		$vinculo .=  apex_hilo_qs_item . "=" . $item_a_llamar;
+		if(trim($parametros_formateados)!="") {
 			$encriptar_qs = toba::proyecto()->get_parametro('encriptar_qs');
 			if($encriptar_qs){
+				$claves = toba::instalacion()->get_claves_encriptacion();
 				//Le concateno un string unico al texto que quiero encriptar asi evito que conozca 
 				//la clave alguien que ve los parametros encriptados y sin encriptar
 				$parametros_formateados .= $parametros_formateados . $separador."jmb76=". uniqid("");
-				$vinculo = $vinculo . $separador . apex_hilo_qs_parametros ."=". toba::encriptador()->cifrar($parametros_formateados);
+				$vinculo = $vinculo . $separador . apex_hilo_qs_parametros ."=". toba::encriptador()->cifrar_para_web($parametros_formateados, $claves['get']);
 			}else{
 				$vinculo = $vinculo . $parametros_formateados;
 			}

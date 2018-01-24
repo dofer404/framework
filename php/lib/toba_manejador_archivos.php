@@ -54,7 +54,8 @@ class toba_manejador_archivos
 	 * @param mixed $stdout
 	 * @param mixed $stderr
 	 * @return integer
-	 * @deprecated since version 2.8.0 @use toba_manejador_procesos::ejecutar
+	 * @deprecated since version 3.0.0 
+	 * @use toba_manejador_procesos::ejecutar
 	 */
 	static function ejecutar($cmd, &$stdout, &$stderr)
 	{
@@ -299,7 +300,7 @@ class toba_manejador_archivos
 		}
 		$ok = true;
 		$dir = opendir( $directorio );
-		while ( $archivo = readdir( $dir ) ) {
+		while ( false !== ($archivo = readdir($dir))) {
 			$path = $directorio.'/'.$archivo;
 			if ( $archivo != "." && $archivo!=".." ) {
 				if ( is_dir( $path ) ) {
@@ -322,19 +323,21 @@ class toba_manejador_archivos
 	 */
 	static function chmod_recursivo($path, $filemode) 
 	{
-		if (!is_dir($path))
+		if (!is_dir($path)) {
 			return chmod($path, $filemode);
-
+		}
 		$dh = opendir($path);
 		while ($file = readdir($dh)) {
 			if($file != '.' && $file != '..') {
 				$fullpath = $path.'/'.$file;
 				if(!is_dir($fullpath)) {
-					if (!chmod($fullpath, $filemode))
+					if (!chmod($fullpath, $filemode)) {						
 						return FALSE;
+					}
 				} else {
-					if (!chmod_recursivo($fullpath, $filemode))
+					if (! self::chmod_recursivo($fullpath, $filemode)) {
 						return FALSE;
+					}
 				}
 			}
 		}
